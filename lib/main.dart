@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rural_de_bolso/screens/Login.dart';
+import 'package:rural_de_bolso/screens/NotificacaoPage.dart';
 import 'package:rural_de_bolso/screens/dashboard.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
 import 'package:rural_de_bolso/utils/appController.dart';
@@ -17,13 +18,13 @@ class RuralDeBolso extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'RuralDeBolso',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      initialRoute:
-          appController.instance.isLogged ? AppRouter.HOME : AppRouter.LOGIN,
+          primarySwatch: Colors.green, accentColor: Colors.greenAccent),
+      initialRoute: AppRouter.LOGIN,
+//          appController.instance.isLogged ? AppRouter.HOME : AppRouter.LOGIN,
       routes: {
         AppRouter.LOGIN: (context) => Login(),
         AppRouter.HOME: (context) => Dashboard(),
+        AppRouter.NOTIFICAOES: (context) => NotificacaoPage(),
       },
     );
   }

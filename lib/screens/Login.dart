@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rural_de_bolso/scrapping/MateriasScrapping.dart';
 import 'package:rural_de_bolso/scrapping/ServiceLogin.dart';
 import 'package:rural_de_bolso/utils/app_router.dart';
 import 'package:rural_de_bolso/components/snackBar.dart';
@@ -95,8 +96,9 @@ class __bodyState extends State<_body> {
                   ServiceLogin.doLogin(_username, _pass).then((logado) => {
                         if (logado)
                           {
-                            Navigator.of(context)
-                                .pushReplacementNamed(AppRouter.HOME)
+                            MateriasPage.instance.extraiInformacaoesMaterias()
+                            // Navigator.of(context)
+                            //     .pushReplacementNamed(AppRouter.HOME)
                           }
                         else
                           {

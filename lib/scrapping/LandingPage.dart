@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:rural_de_bolso/model/Aluno.dart';
-import 'package:rural_de_bolso/model/UpdateMateria.dart';
+import 'package:rural_de_bolso/model/Notificacao.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
 
-import 'CalendarioPage.dart';
+import 'MateriasScrapping.dart';
 
 class LandingPage {
   static LandingPage instance = new LandingPage();
@@ -13,7 +13,7 @@ class LandingPage {
         .get('https://sigaa.ufrrj.br/sigaa/portais/discente/discente.jsf');
 
     // CalendarioPage.instance.extraiInformacaoesLanding();
-    Aluno? aluno = Aluno(
+    Aluno aluno = Aluno(
         nome: '',
         departamento: '',
         semestre: '',
@@ -25,7 +25,7 @@ class LandingPage {
       var materias = extraiMaterias();
       var updates = extraiUpdates();
       var valores = extraiTabelaDadosAluno();
-
+      MateriasPage.instance.extraiInformacaoesMaterias();
 //menu%3Aform_menu_discente=menu%3Aform_menu_discente&id=38743&jscook_action=menu_form_menu_discente_j_id_jsp_1051466817_98_menu%3AA%5D%23%7Bcalendario.iniciarBusca%7D&javax.faces.ViewState=j_id10
       // var elements = HttpConnection.webScraper
       //     .getElement('tr.ThemeOfficeMenuItem > td', []);
@@ -39,13 +39,12 @@ class LandingPage {
           updates: updates,
           tabela: null,
           valores: valores);
-      print(aluno);
     }
     return aluno;
   }
 
   extraiUpdates() {
-    List<UpdateMateria> updates = [];
+    List<Notificacao> updates = [];
     var elements = HttpConnection.webScraper.getElement('.rotator > table', []);
     elements.forEach((element) {
       if (element['title'] != null && element['title'] != '') {
@@ -68,10 +67,11 @@ class LandingPage {
             partesNoticia.add(t);
           }
         });
-        updates.add(new UpdateMateria(
+        updates.add(new Notificacao(
             data: partesNoticia[0],
-            materia: partesNoticia[1],
-            descricao: partesNoticia[2]));
+            titulo: partesNoticia[1],
+            descricao: partesNoticia[2],
+            tipo: TipoNotificaco.Materia));
       }
       ;
     });

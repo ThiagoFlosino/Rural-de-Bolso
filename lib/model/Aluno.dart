@@ -1,4 +1,4 @@
-import 'package:rural_de_bolso/model/UpdateMateria.dart';
+import 'package:rural_de_bolso/model/Notificacao.dart';
 
 class Aluno {
   final String nome;
@@ -6,7 +6,7 @@ class Aluno {
   final String semestre;
   final String img;
   final List<String> materias;
-  final List<UpdateMateria> updates;
+  final List<Notificacao> updates;
   final tabela;
   final valores;
 
