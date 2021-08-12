@@ -1,37 +1,33 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
+import 'package:rural_de_bolso/model/Infos.dart';
+import 'package:rural_de_bolso/model/Materia.dart';
 import 'package:rural_de_bolso/utils/Conversor.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
 import 'package:html/parser.dart' show parse;
-import 'package:html/dom.dart';
 import 'package:intl/intl.dart';
 
 class MateriasPage {
   static MateriasPage instance = new MateriasPage();
   static String horarioTabelaRegex = r'\d{2}\w\d{2}/gi';
 
-  void extraiInformacaoesMaterias() async {
+  Future<List<Materia>> extraiInformacaoesMaterias() async {
     Response response = await HttpConnection.dio
         .get('https://sigaa.ufrrj.br/sigaa/portais/discente/turmas.jsf');
     if (HttpConnection.webScraper.loadFromString(response.data)) {
-      extraiPeriodoAtual(parse(response.data));
+      return extraiPeriodoAtual(parse(response.data));
     }
+    return [];
   }
 
-  extraiPeriodoAtual(document) async {
-    var lista = {
-      "periodo": "",
-      "materias": List,
-    };
+  Future<List<Materia>> extraiPeriodoAtual(document) async {
+    List<Materia> lista = [];
     var periodo = 0;
     var tabelaMaterias = document.querySelectorAll("tr");
     if (tabelaMaterias.length == 0) {
-      return;
+      return [];
     }
 
-    var materias = [];
+    var periodoTitulo = '';
     for (final linha in tabelaMaterias) {
       if (linha.className.contains("destaque")) {
         if (periodo == 0) {
@@ -43,26 +39,26 @@ class MateriasPage {
                     .replaceAll("\n", "")
               });
           periodo++;
-          lista['periodo'] = txt;
+          periodoTitulo = txt;
         } else {
-          lista['materias'] = materias;
           break;
         }
       } else if (!linha.className.contains("destaque") && periodo != 0) {
-        var materia = {};
+        Materia materia = Materia();
+        materia.semestre = periodoTitulo;
         for (var i = 0; i < linha.children.length; i++) {
           var node = linha.children[i];
           var txt =
               node.innerHtml.trim().replaceAll("\t", "").replaceAll("\n", "");
           if (txt == null || txt == '') {
           } else if (txt.contains("h") && !txt.contains("function")) {
-            materia['horas'] = txt;
+            materia.cargaHoraria = txt;
           } else if ((txt.contains("(") == true ||
                   txt.contains(RegExp(horarioTabelaRegex)) == true) &&
               !txt.contains("function")) {
-            materia['horario'] = txt;
+            materia.horario = txt;
           } else if (txt.contains("-") && !txt.contains("function")) {
-            materia['nome'] = txt;
+            materia.nome = txt;
           } else if (txt.contains('href') && !txt.contains('script')) {
             var link = node.children[0];
             var textoLink = link.attributes['onclick'];
@@ -75,22 +71,22 @@ class MateriasPage {
             Response respPost = await HttpConnection.dio
                 .post(post['action'], data: post['form']);
             if (HttpConnection.webScraper.loadFromString(respPost.data)) {
-              var atividade = ExtrairBody();
-              var menuLaterial = await ExtraiMenuLateralMateria();
-              materia['menuLateral'] = menuLaterial;
+              // var atividade = ExtrairBody();
+              List<InfoMateria> menuLaterial = await ExtraiMenuLateralMateria();
+              materia.infoMaterias = [];
+              materia.infoMaterias = menuLaterial;
             }
           }
         }
-        materias.add(materia);
+        lista.add(materia);
       }
     }
-    // log(lista.toString());
     return lista;
   }
 
   void ExtrairBody() {
     var Aulas = HttpConnection.webScraper.getElement('.titulo', ['id']);
-    var retornoAulas = [];
+    // var retornoAulas = [];
     var tituloAula;
     Aulas.forEach((element) {
       tituloAula = element['title']
@@ -112,28 +108,31 @@ class MateriasPage {
     return tituloAula;
   }
 
-  Future<List> ExtraiMenuLateralMateria() async {
-    var listaMenuLateral = [];
+  Future<List<InfoMateria>> ExtraiMenuLateralMateria() async {
+    List<InfoMateria> listaMenuLateral = [];
     var menuLaterialHeader =
         HttpConnection.webScraper.getElement('.headerBloco', ['id']);
     menuLaterialHeader.forEach((element) {
+      InfoMateria infoMateria = InfoMateria();
+      infoMateria.titulo = element['title'].trim();
+      infoMateria.itens = List.empty();
       var id = element['attributes']['id'].toString().replaceAll('_header', '');
-      var subMenu = {'titulo': element['title'].trim(), 'itens': []};
       var data = HttpConnection.webScraper.getElement('#${id} li .data', []);
       var descricao =
           HttpConnection.webScraper.getElement('#${id} li .descricao', []);
       int i = 0;
+      List<Infos> listInfos = [];
       while (i < data.length) {
-        subMenu['itens'].add({
-          'data': new DateFormat('dd/MM/yyyy').parse(
-              data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
-                  '/' +
-                  DateTime.now().year.toString()),
-          'descricao': descricao[i]['title'].trim()
-        });
+        DateTime dataInfo = new DateFormat('dd/MM/yyyy').parse(
+            data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
+                '/' +
+                DateTime.now().year.toString());
+        Infos info = Infos(dataInfo, descricao[i]['title'].trim());
+        listInfos.add(info);
         i++;
       }
-      listaMenuLateral.add(subMenu);
+      infoMateria.itens = listInfos;
+      listaMenuLateral.add(infoMateria);
     });
     return listaMenuLateral;
   }

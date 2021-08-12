@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:rural_de_bolso/model/Aluno.dart';
 import 'package:rural_de_bolso/model/Notificacao.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
+import 'package:rural_de_bolso/utils/UserStorage.dart';
 
 import 'MateriasScrapping.dart';
 
@@ -22,24 +23,23 @@ class LandingPage {
         updates: []);
     if (HttpConnection.webScraper.loadFromString(response.data)) {
       var infoAluno = extraiInfosAluno();
-      var materias = extraiMaterias();
+      // var materias = extraiMaterias();
       var updates = extraiUpdates();
       var valores = extraiTabelaDadosAluno();
-      MateriasPage.instance.extraiInformacaoesMaterias();
-//menu%3Aform_menu_discente=menu%3Aform_menu_discente&id=38743&jscook_action=menu_form_menu_discente_j_id_jsp_1051466817_98_menu%3AA%5D%23%7Bcalendario.iniciarBusca%7D&javax.faces.ViewState=j_id10
-      // var elements = HttpConnection.webScraper
-      //     .getElement('tr.ThemeOfficeMenuItem > td', []);
-      // print(elements);
+      var materiasDetalhes =
+          await MateriasPage.instance.extraiInformacaoesMaterias();
+
       aluno = Aluno(
           nome: infoAluno['name'],
           departamento: infoAluno['dept'],
           semestre: infoAluno['sem'],
           img: infoAluno['img'],
-          materias: materias,
+          materias: materiasDetalhes,
           updates: updates,
           tabela: null,
           valores: valores);
     }
+    UserStorage.setAluno(aluno);
     return aluno;
   }
 
@@ -69,8 +69,8 @@ class LandingPage {
         });
         updates.add(new Notificacao(
             data: partesNoticia[0],
-            titulo: partesNoticia[1],
-            descricao: partesNoticia[2],
+            titulo: partesNoticia[1].toString(),
+            descricao: partesNoticia[2].toString(),
             tipo: TipoNotificaco.Materia));
       }
       ;

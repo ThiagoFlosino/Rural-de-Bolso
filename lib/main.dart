@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rural_de_bolso/screens/Login.dart';
+import 'package:rural_de_bolso/screens/MateriaScreen.dart';
 import 'package:rural_de_bolso/screens/NotificacaoPage.dart';
 import 'package:rural_de_bolso/screens/dashboard.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
-import 'package:rural_de_bolso/utils/appController.dart';
 import 'package:rural_de_bolso/utils/app_router.dart';
 
 void main() {
@@ -24,7 +24,7 @@ class RuralDeBolso extends StatelessWidget {
       routes: {
         AppRouter.LOGIN: (context) => Login(),
         AppRouter.HOME: (context) => Dashboard(),
-        AppRouter.NOTIFICAOES: (context) => NotificacaoPage(),
+        AppRouter.MATERIAS: (context) => MateriaScreen()
       },
     );
   }

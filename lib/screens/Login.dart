@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rural_de_bolso/scrapping/MateriasScrapping.dart';
+import 'package:rural_de_bolso/model/Aluno.dart';
+import 'package:rural_de_bolso/scrapping/LandingPage.dart';
 import 'package:rural_de_bolso/scrapping/ServiceLogin.dart';
 import 'package:rural_de_bolso/utils/app_router.dart';
 import 'package:rural_de_bolso/components/snackBar.dart';
@@ -93,12 +94,27 @@ class __bodyState extends State<_body> {
               SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
+                  ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                    content: new Row(
+                      children: <Widget>[
+                        new CircularProgressIndicator(),
+                        new Text("  Signing-In...")
+                      ],
+                    ),
+                    duration: new Duration(seconds: 10),
+                  ));
                   ServiceLogin.doLogin(_username, _pass).then((logado) => {
                         if (logado)
                           {
-                            MateriasPage.instance.extraiInformacaoesMaterias()
-                            // Navigator.of(context)
-                            //     .pushReplacementNamed(AppRouter.HOME)
+                            LandingPage.instance
+                                .extraiInformacaoesLanding()
+                                .then((value) => {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar(),
+                                      Navigator.of(context)
+                                          .pushReplacementNamed(AppRouter.HOME,
+                                              arguments: value)
+                                    })
                           }
                         else
                           {

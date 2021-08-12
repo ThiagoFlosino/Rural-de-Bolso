@@ -1,11 +1,14 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:rural_de_bolso/model/Aluno.dart';
+import 'package:rural_de_bolso/model/Infos.dart';
 import 'package:rural_de_bolso/scrapping/LandingPage.dart';
-import 'package:intl/intl.dart';
+import 'package:rural_de_bolso/screens/ListMateriasScreen.dart';
+import 'package:rural_de_bolso/screens/MateriaScreen.dart';
+import 'package:rural_de_bolso/screens/NotificacaoPage.dart';
+import 'package:rural_de_bolso/utils/UserStorage.dart';
 import 'package:rural_de_bolso/utils/app_router.dart';
+import 'package:intl/intl.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -15,66 +18,100 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard> {
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Aluno alunoInfos =
+        ModalRoute.of(context)?.settings.arguments as Aluno;
+    Widget getPage(int index) {
+      switch (index) {
+        case 0:
+          return HomeScreen(alunoInfos: alunoInfos);
+        case 1:
+          return ListMateriasScreen(materias: alunoInfos.materias);
+        default:
+          return NotificacaoPage(notificacoes: alunoInfos.updates);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Rural de bolso"),
-        // automaticallyImplyLeading: false,
       ),
-      drawer: Drawer(
-        child: SafeArea(
-          child: Container(
-            child: Column(
-              children: [
-                Container(
-                  color: Colors.green,
-                  width: double.infinity,
-                  height: 60,
-                  padding: EdgeInsets.all(20),
-                  child: Text(
-                    'Rural de Bolso',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                )
-              ],
-            ),
+      bottomNavigationBar: BottomNav(),
+      drawer: MenuLateral(),
+      body: getPage(_selectedIndex),
+    );
+  }
+
+  Drawer MenuLateral() {
+    return Drawer(
+      child: SafeArea(
+        child: Container(
+          child: Column(
+            children: [
+              Container(
+                color: Colors.green,
+                width: double.infinity,
+                height: 60,
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  'Rural de Bolso',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              )
+            ],
           ),
         ),
       ),
-      body: FutureBuilder<Aluno>(
-        initialData: null,
-        future: LandingPage.instance.extraiInformacaoesLanding(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              break;
-            case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
-            case ConnectionState.active:
-              break;
-            case ConnectionState.done:
-              final Aluno _aluno = snapshot.data as Aluno;
-              return SingleChildScrollView(child: _infos(_aluno));
-          }
-          return Text('Unknown Error');
-        },
-      ),
+    );
+  }
+
+  BottomNavigationBar BottomNav() {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.school),
+          label: 'Matérias',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.notifications),
+          label: 'Notificações',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.amber[800],
+      onTap: _onItemTapped,
     );
   }
 }
 
-class _infos extends StatelessWidget {
-  final Aluno _aluno;
+class HomeScreen extends StatefulWidget {
+  final Aluno alunoInfos;
+  const HomeScreen({Key? key, required this.alunoInfos}) : super(key: key);
 
-  const _infos(this._aluno);
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-        child: Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
             height: 120,
@@ -83,7 +120,7 @@ class _infos extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(_aluno.img),
+                  backgroundImage: NetworkImage(widget.alunoInfos.img),
                   radius: 50,
                 ),
                 Column(
@@ -95,7 +132,7 @@ class _infos extends StatelessWidget {
                         Icon(Icons.person_outline,
                             color: Theme.of(context).accentColor),
                         SizedBox(width: 4),
-                        Text(_aluno.nome,
+                        Text(widget.alunoInfos.nome,
                             style: TextStyle(fontSize: 16),
                             overflow: TextOverflow.ellipsis),
                       ],
@@ -105,7 +142,7 @@ class _infos extends StatelessWidget {
                         Icon(Icons.domain_outlined,
                             color: Theme.of(context).accentColor),
                         SizedBox(width: 4),
-                        Text(_aluno.departamento,
+                        Text(widget.alunoInfos.departamento,
                             style: TextStyle(fontSize: 12)),
                       ],
                     ),
@@ -114,7 +151,7 @@ class _infos extends StatelessWidget {
                         Icon(Icons.school_outlined,
                             color: Theme.of(context).accentColor),
                         SizedBox(width: 4),
-                        Text('Período atual: ' + _aluno.semestre,
+                        Text('Período atual: ' + widget.alunoInfos.semestre,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 12)),
                       ],
@@ -131,9 +168,9 @@ class _infos extends StatelessWidget {
               animation: true,
               lineHeight: 15,
               animationDuration: 1000,
-              percent: _aluno.valores['percentual'],
+              percent: widget.alunoInfos.valores['percentual'],
               center: Text(
-                (_aluno.valores['percentual'] * 100).toString() +
+                (widget.alunoInfos.valores['percentual'] * 100).toString() +
                     '% Integralizado',
                 style: TextStyle(color: Colors.white),
               ),
@@ -141,17 +178,8 @@ class _infos extends StatelessWidget {
               progressColor: Theme.of(context).primaryColor,
             ),
           ),
-          horarios(aluno: _aluno),
-          Container(
-            child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                // padding: const EdgeInsets.all(20.0),
-                itemCount: _aluno.materias.length,
-                itemBuilder: (context, index) {
-                  return Card(child: Text(_aluno.materias[index]));
-                }),
-          ),
+          horarios(aluno: widget.alunoInfos),
+
           // Container(
           //   height: 200,
           //   child: ListView.builder(
@@ -169,16 +197,9 @@ class _infos extends StatelessWidget {
           //                 subtitle: Text(_aluno.updates[index].descricao)));
           //       }),
           // ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(AppRouter.NOTIFICAOES, arguments: _aluno.updates);
-            },
-            child: Text('Sair', style: TextStyle(fontSize: 20)),
-          ),
         ],
       ),
-    ));
+    );
   }
 }
 
