@@ -1,11 +1,11 @@
 import 'Infos.dart';
 
 class Materia {
-  late String nome;
-  late String horario;
-  late String semestre;
-  late String cargaHoraria;
-  late List<InfoMateria> infoMaterias;
+  String? nome;
+  String? horario;
+  String? semestre;
+  String? cargaHoraria;
+  List<InfoMateria>? infoMaterias;
   // final List<Notificacao> updates;
   // final tabela;
   // final valores;

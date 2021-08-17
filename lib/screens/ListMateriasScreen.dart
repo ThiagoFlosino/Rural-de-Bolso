@@ -28,9 +28,13 @@ class _ListMateriasScreenState extends State<ListMateriasScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       ListTile(
-                        leading: Icon(Icons.notifications_none),
-                        title: Text(widget.materias[index].nome),
-                        subtitle: Text(widget.materias[index].horario),
+                        leading: Icon(Icons.class__outlined),
+                        title: Text(widget.materias[index].nome != null
+                            ? widget.materias[index].nome.toString()
+                            : '-'),
+                        subtitle: Text(widget.materias[index].horario != null
+                            ? widget.materias[index].horario.toString()
+                            : 'NÃO EXTRAÍDO'),
                       )
                     ],
                   ),

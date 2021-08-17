@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
+import 'package:html/parser.dart';
 import 'package:rural_de_bolso/model/Aluno.dart';
 import 'package:rural_de_bolso/model/Notificacao.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
@@ -28,6 +31,7 @@ class LandingPage {
       var valores = extraiTabelaDadosAluno();
       var materiasDetalhes =
           await MateriasPage.instance.extraiInformacaoesMaterias();
+      await teste();
 
       aluno = Aluno(
           nome: infoAluno['name'],
@@ -160,16 +164,7 @@ class LandingPage {
     print(valores);
     return valores;
     // return infos;
-    // elements = HttpConnection.webScraper.getElement(
-    //     '#perfil-docente #agenda-docente > table >  tbody > tr > td ', []);
-    // elements.forEach((element) {
-    //   if (element['title'] != null && element['title'] != '') {
-    //     var texto = element['title'];
-    //     texto = texto
-    //         .trim()
-    //         .replaceAll(RegExp(r'\t'), '')
-    //         .replaceAll(RegExp(r'\n'), '');
-    // print(texto);
+
     // if (texto.toLowerCase().contains("matrícula")) {
     //   retorno['matricula'] = texto[1].trim();
     // }
@@ -194,5 +189,22 @@ class LandingPage {
     // if (texto.toLowerCase().contains("ingresso")) {
     //   retorno['tipoIngresso'] = texto[1].trim();
     // }
+  }
+
+  teste() async {
+    var elements = HttpConnection.webScraper.getPageContent();
+    // elements.forEach((element) {
+    //   if (element.contains('fcontent')) {
+    //   }
+    // log(elements.toString());
+    //   // if (element['title'] != null && element['title'] != '') {
+    //   //   var texto = element['title'];
+    //   //   // texto = texto
+    //   //   //     .trim()
+    //   //   //     .replaceAll(RegExp(r'\t'), '')
+    //   //   //     .replaceAll(RegExp(r'\n'), '');
+    //   //   log(texto);
+    //   // }
+    // });
   }
 }

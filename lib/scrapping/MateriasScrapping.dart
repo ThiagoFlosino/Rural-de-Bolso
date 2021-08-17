@@ -30,7 +30,7 @@ class MateriasPage {
     var periodoTitulo = '';
     for (final linha in tabelaMaterias) {
       if (linha.className.contains("destaque")) {
-        if (periodo == 0) {
+        if (periodo <= 3) {
           var txt = '';
           linha.children.forEach((celula) => {
                 txt = celula.innerHtml
@@ -123,10 +123,11 @@ class MateriasPage {
       int i = 0;
       List<Infos> listInfos = [];
       while (i < data.length) {
-        DateTime dataInfo = new DateFormat('dd/MM/yyyy').parse(
-            data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
-                '/' +
-                DateTime.now().year.toString());
+        // DateTime dataInfo = new DateFormat('dd/MM/yyyy').parse(
+        //     data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
+        //         '/' +
+        //         DateTime.now().year.toString());
+        DateTime dataInfo = DateTime.now();
         Infos info = Infos(dataInfo, descricao[i]['title'].trim());
         listInfos.add(info);
         i++;
