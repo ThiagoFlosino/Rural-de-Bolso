@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:rural_de_bolso/model/Infos.dart';
 import 'package:rural_de_bolso/model/Materia.dart';
@@ -9,6 +11,8 @@ import 'package:intl/intl.dart';
 class MateriasPage {
   static MateriasPage instance = new MateriasPage();
   static String horarioTabelaRegex = r'\d{2}\w\d{2}/gi';
+  static String replaceScript =
+      '<script type="text/javascript" language="Javascript">function dpf(f) {var adp = f.adp;if (adp != null) {for (var i = 0;i < adp.length;i++) {f.removeChild(adp[i]);}}};function apf(f, pvp) {var adp = new Array();f.adp = adp;var i = 0;for (k in pvp) {var p = document.createElement("input");p.type = "hidden";p.name = k;p.value = pvp[k];f.appendChild(p);adp[i++] = p;}};function jsfcljs(f, pvp, t) {apf(f, pvp);var ft = f.target;if (t) {f.target = t;}f.submit();f.target = ft;dpf(f);};</script>';
 
   Future<List<Materia>> extraiInformacaoesMaterias() async {
     Response response = await HttpConnection.dio
@@ -30,7 +34,7 @@ class MateriasPage {
     var periodoTitulo = '';
     for (final linha in tabelaMaterias) {
       if (linha.className.contains("destaque")) {
-        if (periodo <= 3) {
+        if (periodo == 0) {
           var txt = '';
           linha.children.forEach((celula) => {
                 txt = celula.innerHtml
@@ -59,8 +63,13 @@ class MateriasPage {
             materia.horario = txt;
           } else if (txt.contains("-") && !txt.contains("function")) {
             materia.nome = txt;
-          } else if (txt.contains('href') && !txt.contains('script')) {
-            var link = node.children[0];
+          } else if (txt.contains('href') || txt.contains('script')) {
+            var link;
+            if (!txt.contains('script')) {
+              link = node.children[0];
+            } else {
+              link = node.children[1];
+            }
             var textoLink = link.attributes['onclick'];
             var limpo = textoLink
                 .replaceAll(
@@ -73,8 +82,10 @@ class MateriasPage {
             if (HttpConnection.webScraper.loadFromString(respPost.data)) {
               // var atividade = ExtrairBody();
               List<InfoMateria> menuLaterial = await ExtraiMenuLateralMateria();
-              materia.infoMaterias = [];
-              materia.infoMaterias = menuLaterial;
+              materia.infoMaterias = List.empty();
+              if (!menuLaterial.isEmpty) {
+                materia.infoMaterias = menuLaterial;
+              }
             }
           }
         }
@@ -123,11 +134,11 @@ class MateriasPage {
       int i = 0;
       List<Infos> listInfos = [];
       while (i < data.length) {
-        // DateTime dataInfo = new DateFormat('dd/MM/yyyy').parse(
-        //     data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
-        //         '/' +
-        //         DateTime.now().year.toString());
-        DateTime dataInfo = DateTime.now();
+        DateTime? dataInfo = DateTime.tryParse(
+            data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
+                '/' +
+                DateTime.now().year.toString());
+        // DateTime dataInfo = DateTime.now();
         Infos info = Infos(dataInfo, descricao[i]['title'].trim());
         listInfos.add(info);
         i++;

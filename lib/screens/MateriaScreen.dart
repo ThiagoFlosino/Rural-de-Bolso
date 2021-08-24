@@ -14,7 +14,7 @@ class _MateriaScreenState extends State<MateriaScreen> {
   @override
   Widget build(BuildContext context) {
     final Materia materia =
-        ModalRoute.of(context)?.settings.arguments as Materia;
+        ModalRoute.of(context)!.settings.arguments as Materia;
     return Scaffold(
       appBar: AppBar(
         title: Text('Materia'),
@@ -64,7 +64,7 @@ class _MateriaScreenState extends State<MateriaScreen> {
             ExpansionPanelList(
               expansionCallback: (int index, bool isExpanded) {
                 setState(() {
-                  materia.infoMaterias![index].isExpanded = !isExpanded;
+                  materia.infoMaterias?[index].isExpanded = !isExpanded;
                 });
               },
               children:
@@ -84,8 +84,9 @@ class _MateriaScreenState extends State<MateriaScreen> {
                         child: ListTile(
                           leading: FlutterLogo(),
                           title: Text(item.itens[indexSub].descricao),
-                          subtitle: Text(DateFormat("dd/MM/yyyy")
-                              .format(item.itens[indexSub].data)),
+                          subtitle: Text((item.itens[indexSub].data != null
+                              ? item.itens[indexSub].data!.toString()
+                              : '-')),
                         ),
                       );
                     },

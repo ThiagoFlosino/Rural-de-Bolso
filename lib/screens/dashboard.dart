@@ -119,22 +119,33 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(widget.alunoInfos.img),
-                  radius: 50,
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(widget.alunoInfos.img),
+                        radius: 50,
+                      ),
+                    ),
+                  ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
+                    Wrap(
                       children: [
                         Icon(Icons.person_outline,
                             color: Theme.of(context).accentColor),
                         SizedBox(width: 4),
-                        Text(widget.alunoInfos.nome,
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(
+                            widget.alunoInfos.nome,
                             style: TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis),
+                          ),
+                        ),
                       ],
                     ),
                     Row(
@@ -178,25 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
               progressColor: Theme.of(context).primaryColor,
             ),
           ),
-          horarios(aluno: widget.alunoInfos),
-
-          // Container(
-          //   height: 200,
-          //   child: ListView.builder(
-          //       scrollDirection: Axis.vertical,
-          //       shrinkWrap: true,
-          //       // padding: const EdgeInsets.all(20.0),
-          //       itemCount: 3, // Pegando só o Top3
-          //       itemBuilder: (context, index) {
-          //         return Card(
-          //             child: ListTile(
-          //                 title: Text(DateFormat("dd/MM/yyyy")
-          //                         .format(_aluno.updates[index].data) +
-          //                     ' - ' +
-          //                     _aluno.updates[index].titulo),
-          //                 subtitle: Text(_aluno.updates[index].descricao)));
-          //       }),
-          // ),
+          horarios(aluno: widget.alunoInfos)
         ],
       ),
     );
@@ -214,14 +207,13 @@ class horarios extends StatefulWidget {
 class _horariosState extends State<horarios> {
   @override
   Widget build(BuildContext context) {
-    print(int.parse(widget.aluno.valores['obrigatoria']) / 3360);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Container(
-          width: 120,
+          width: 110,
           child: CircularPercentIndicator(
-            radius: 120.0,
+            radius: 110.0,
             lineWidth: 10.0,
             animation: true,
             percent: ((3360 - int.parse(widget.aluno.valores['obrigatoria'])) /
@@ -232,7 +224,7 @@ class _horariosState extends State<horarios> {
                 children: [
                   Text(
                     'Obrigatórias',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.black, fontSize: 11),
                   ),
                   Text(
                       '${3360 - int.parse(widget.aluno.valores['obrigatoria'])}',
@@ -252,9 +244,9 @@ class _horariosState extends State<horarios> {
           ),
         ),
         Container(
-          width: 120,
+          width: 110,
           child: CircularPercentIndicator(
-            radius: 120.0,
+            radius: 110.0,
             lineWidth: 10.0,
             animation: true,
             percent:
@@ -266,9 +258,12 @@ class _horariosState extends State<horarios> {
               padding: EdgeInsets.fromLTRB(10, 25, 10, 5),
               child: Column(
                 children: [
-                  Text(
-                    'Complementar',
-                    style: TextStyle(color: Colors.black),
+                  Container(
+                    // width: 85,
+                    child: Text(
+                      'Complementar',
+                      style: TextStyle(color: Colors.black, fontSize: 11),
+                    ),
                   ),
                   Text(
                       '${200 - int.parse(widget.aluno.valores['complementar'])}',
@@ -288,9 +283,9 @@ class _horariosState extends State<horarios> {
           ),
         ),
         Container(
-          width: 120,
+          width: 110,
           child: CircularPercentIndicator(
-            radius: 120.0,
+            radius: 110.0,
             lineWidth: 10.0,
             animation: true,
             percent: ((120 - int.parse(widget.aluno.valores['optativa'])) <= 0
@@ -302,7 +297,7 @@ class _horariosState extends State<horarios> {
                 children: [
                   Text(
                     'Optativa',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.black, fontSize: 11),
                   ),
                   Text('${120 - int.parse(widget.aluno.valores['optativa'])}',
                       style: TextStyle(fontSize: 20, color: Colors.black)),
