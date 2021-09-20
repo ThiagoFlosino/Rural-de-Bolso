@@ -13,10 +13,10 @@ class LandingPage {
   static LandingPage instance = new LandingPage();
 
   Future<Aluno> extraiInformacaoesLanding() async {
+    // TODO: Adicionar log nessa funcao
     Response response = await HttpConnection.dio
         .get('https://sigaa.ufrrj.br/sigaa/portais/discente/discente.jsf');
 
-    // CalendarioPage.instance.extraiInformacaoesLanding();
     Aluno aluno = Aluno(
         nome: '',
         departamento: '',
@@ -31,13 +31,13 @@ class LandingPage {
       var valores = extraiTabelaDadosAluno();
       var materiasDetalhes =
           await MateriasPage.instance.extraiInformacaoesMaterias();
-      await teste();
 
       aluno = Aluno(
           nome: infoAluno['name'],
           departamento: infoAluno['dept'],
           semestre: infoAluno['sem'],
           img: infoAluno['img'],
+          // materias: [],
           materias: materiasDetalhes,
           updates: updates,
           tabela: null,
@@ -103,19 +103,27 @@ class LandingPage {
 
     // 'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.usuario',
     elements = HttpConnection.webScraper.getElement('.nome > small > b', []);
-    name = elements[0]['title'].toString().trim();
+    if (!elements.isEmpty) {
+      name = elements[0]['title'].toString().trim();
+    }
     elements = HttpConnection.webScraper.getElement(
         'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.periodo-atual > strong',
         []);
-    sem = elements[0]['title'].toString().trim();
+    if (!elements.isEmpty) {
+      sem = elements[0]['title'].toString().trim();
+    }
     elements = HttpConnection.webScraper.getElement(
         'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.unidade',
         []);
-    dept = elements[0]['title'].toString().split('(')[0].trim();
+    if (!elements.isEmpty) {
+      dept = elements[0]['title'].toString().split('(')[0].trim();
+    }
     elements = HttpConnection.webScraper
         .getElement('.foto > img:nth-child(1)', ['src']);
-    //'https://sigaa.ufrrj.br'
-    img = elements[0]['attributes']['src'];
+
+    if (!elements.isEmpty) {
+      img = elements[0]['attributes']['src'];
+    }
     return {'name': name, 'dept': dept, 'sem': sem, 'img': img};
   }
 
@@ -189,22 +197,5 @@ class LandingPage {
     // if (texto.toLowerCase().contains("ingresso")) {
     //   retorno['tipoIngresso'] = texto[1].trim();
     // }
-  }
-
-  teste() async {
-    var elements = HttpConnection.webScraper.getPageContent();
-    // elements.forEach((element) {
-    //   if (element.contains('fcontent')) {
-    //   }
-    // log(elements.toString());
-    //   // if (element['title'] != null && element['title'] != '') {
-    //   //   var texto = element['title'];
-    //   //   // texto = texto
-    //   //   //     .trim()
-    //   //   //     .replaceAll(RegExp(r'\t'), '')
-    //   //   //     .replaceAll(RegExp(r'\n'), '');
-    //   //   log(texto);
-    //   // }
-    // });
   }
 }
