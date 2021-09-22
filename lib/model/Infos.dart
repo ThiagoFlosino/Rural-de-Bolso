@@ -7,7 +7,7 @@ class InfoMateria {
 }
 
 class Infos {
-  DateTime? data;
+  String data;
   String descricao;
 
   Infos(this.data, this.descricao);

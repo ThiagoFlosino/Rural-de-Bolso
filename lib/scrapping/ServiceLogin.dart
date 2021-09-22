@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:rural_de_bolso/store/SharePreferencesHelper.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
 import 'package:rural_de_bolso/utils/UserStorage.dart';
 import 'package:rural_de_bolso/utils/appController.dart';
@@ -11,6 +12,8 @@ class ServiceLogin {
     // TODO: Adicionar log nessa funcao
     UserStorage.setUsername(user);
     UserStorage.setPassword(pass);
+    SharedPreferencesHelper.instance.setUserName(user);
+    SharedPreferencesHelper.instance.setPassword(pass);
     await HttpConnection.dio
         .get("https://sigaa.ufrrj.br/sigaa/verTelaLogin.do");
     var cookie = await HttpConnection.cookieJar

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 class SharedPreferencesHelper {
+  static SharedPreferencesHelper instance = new SharedPreferencesHelper();
+
   static var key = utf8.encode('g"C3bP6H"_AZfSa`');
   Future<bool> setUserName(String username) async {
     final pref = await SharedPreferences.getInstance();
@@ -14,6 +16,16 @@ class SharedPreferencesHelper {
     final pref = await SharedPreferences.getInstance();
     return pref.setString(UserPref.PASSWORD.toString(), password);
   }
+
+  Future<bool> setIsLogged(bool boolean) async {
+    final pref = await SharedPreferences.getInstance();
+    return pref.setBool(UserPref.ISLOGGED.toString(), boolean);
+  }
+
+  Future<bool> isLogged() async {
+    var pref = await SharedPreferences.getInstance();
+    return pref.getBool(UserPref.ISLOGGED.toString()) ?? false;
+  }
 }
 
-enum UserPref { USERNAME, PASSWORD }
+enum UserPref { USERNAME, PASSWORD, ISLOGGED }

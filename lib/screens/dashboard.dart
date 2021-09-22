@@ -6,6 +6,7 @@ import 'package:rural_de_bolso/scrapping/LandingPage.dart';
 import 'package:rural_de_bolso/screens/ListMateriasScreen.dart';
 import 'package:rural_de_bolso/screens/MateriaScreen.dart';
 import 'package:rural_de_bolso/screens/NotificacaoPage.dart';
+import 'package:rural_de_bolso/store/SharePreferencesHelper.dart';
 import 'package:rural_de_bolso/utils/UserStorage.dart';
 import 'package:rural_de_bolso/utils/app_router.dart';
 import 'package:intl/intl.dart';
@@ -27,10 +28,24 @@ class DashboardState extends State<Dashboard> {
     });
   }
 
+  late Aluno alunoInfos;
+  late AnimationController controller;
+
+  _loadData() async {
+    bool isLogged = await SharedPreferencesHelper.instance.isLogged();
+    if (isLogged == true) {
+      LandingPage.instance.extraiInformacaoesLanding().then((value) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        setState(() {
+          alunoInfos = value;
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Aluno alunoInfos =
-        ModalRoute.of(context)?.settings.arguments as Aluno;
+    // ModalRoute.of(context)?.settings.arguments as Aluno;
     Widget getPage(int index) {
       switch (index) {
         case 0:
@@ -43,13 +58,20 @@ class DashboardState extends State<Dashboard> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Rural de bolso"),
-      ),
-      bottomNavigationBar: BottomNav(),
-      drawer: MenuLateral(),
-      body: getPage(_selectedIndex),
-    );
+        appBar: AppBar(
+          title: Text("Rural de bolso"),
+        ),
+        bottomNavigationBar: BottomNav(),
+        drawer: MenuLateral(),
+        body: FutureBuilder(
+            future: _loadData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return getPage(_selectedIndex);
+              } else {
+                return CircularPercentIndicator(radius: 20);
+              }
+            }));
   }
 
   Drawer MenuLateral() {

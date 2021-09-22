@@ -19,11 +19,10 @@ class _LoginState extends State<Login> {
     super.didChangeDependencies();
     reaction((_) => authStore.isLogged, (isLogged) {
       if (isLogged == true) {
-        LandingPage.instance.extraiInformacaoesLanding().then((value) => {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-              Navigator.of(context)
-                  .pushReplacementNamed(AppRouter.HOME, arguments: value)
-            });
+        // LandingPage.instance.extraiInformacaoesLanding().then((value) => {
+        //       ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+        Navigator.of(context).pushReplacementNamed(AppRouter.HOME);
+        // });
       }
     });
   }

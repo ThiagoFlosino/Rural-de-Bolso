@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 import 'package:rural_de_bolso/scrapping/ServiceLogin.dart';
+import 'package:rural_de_bolso/store/SharePreferencesHelper.dart';
 part 'AuthStore.g.dart';
 
 class AuthStore = _AuthStoreBase with _$AuthStore;
@@ -35,7 +36,7 @@ abstract class _AuthStoreBase with Store {
       isLogged = await ServiceLogin.doLogin(username, password);
       setIsLogged(isLogged);
       if (isLogged) {
-        print("Logado...");
+        SharedPreferencesHelper.instance.setIsLogged(isLogged);
       } else {
         print("Erro ao logar");
       }

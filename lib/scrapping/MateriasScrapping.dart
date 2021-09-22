@@ -81,7 +81,8 @@ class MateriasPage {
                 .post(post['action'], data: post['form']);
             if (HttpConnection.webScraper.loadFromString(respPost.data)) {
               // var atividade = ExtrairBody();
-              List<InfoMateria> menuLaterial = await ExtraiMenuLateralMateria();
+              List<InfoMateria> menuLaterial =
+                  await ExtraiMenuLateralMateria(parse(respPost.data));
               materia.infoMaterias = List.empty();
               if (!menuLaterial.isEmpty) {
                 materia.infoMaterias = menuLaterial;
@@ -92,6 +93,7 @@ class MateriasPage {
         lista.add(materia);
       }
     }
+    extraiNoticias();
     return lista;
   }
 
@@ -119,33 +121,74 @@ class MateriasPage {
     return tituloAula;
   }
 
-  Future<List<InfoMateria>> ExtraiMenuLateralMateria() async {
+  Future<List<InfoMateria>> ExtraiMenuLateralMateria(document) async {
     List<InfoMateria> listaMenuLateral = [];
-    var menuLaterialHeader =
-        HttpConnection.webScraper.getElement('.headerBloco', ['id']);
-    menuLaterialHeader.forEach((element) {
+    var blocos = document.querySelectorAll('.blocoDireita');
+    blocos.forEach((bloco) {
       InfoMateria infoMateria = InfoMateria();
-      infoMateria.titulo = element['title'].trim();
-      infoMateria.itens = List.empty();
-      var id = element['attributes']['id'].toString().replaceAll('_header', '');
-      var data = HttpConnection.webScraper.getElement('#${id} li .data', []);
-      var descricao =
-          HttpConnection.webScraper.getElement('#${id} li .descricao', []);
-      int i = 0;
       List<Infos> listInfos = [];
-      while (i < data.length) {
-        DateTime? dataInfo = DateTime.tryParse(
-            data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
-                '/' +
-                DateTime.now().year.toString());
-        // DateTime dataInfo = DateTime.now();
-        Infos info = Infos(dataInfo, descricao[i]['title'].trim());
-        listInfos.add(info);
-        i++;
+      var headers = bloco.querySelectorAll("form .headerBloco");
+      headers.forEach(
+          (header) => {infoMateria.titulo = header.text.toString().trim()});
+
+      var aulas = bloco.querySelectorAll("div .rich-stglpanel-body i");
+      var aulaTxt;
+      aulas.forEach((aula) {
+        if (aula.text.indexOf("/") > -1) {
+          aulaTxt = aula.text;
+          listInfos.add(new Infos('', aulaTxt));
+        }
+      });
+
+      // Get lista de elementos
+      var listas = bloco.querySelectorAll("div .rich-stglpanel-body ul li");
+      listas.forEach((lista) {
+        var data = lista.querySelectorAll('.data')[0].text.toString().trim();
+        var desc =
+            lista.querySelectorAll('.descricao')[0].text.toString().trim();
+        listInfos.add(new Infos(data, desc));
+      });
+
+//   Get body caso nao tenha lista
+      if (listas.length <= 0 && aulaTxt != null) {
+        var boody = bloco.querySelectorAll("div .rich-stglpanel-body");
+        listInfos.add(new Infos('',
+            boody[0].text.replaceAll('\n', '').replaceAll('\t', '').trim()));
       }
       infoMateria.itens = listInfos;
       listaMenuLateral.add(infoMateria);
     });
+
+    // var menuLaterialHeader =
+    //     HttpConnection.webScraper.getElement('.headerBloco', ['id']);
+
+    // menuLaterialHeader.forEach((element) {
+    //   InfoMateria infoMateria = InfoMateria();
+    //   infoMateria.titulo = element['title'].trim();
+    //   infoMateria.itens = List.empty();
+    //   var id = element['attributes']['id'].toString().replaceAll('_header', '');
+    //   var data = HttpConnection.webScraper.getElement('#${id} li .data', []);
+    //   var descricao =
+    //       HttpConnection.webScraper.getElement('#${id} li .descricao', []);
+    //   int i = 0;
+    //   List<Infos> listInfos = [];
+    //   while (i < data.length) {
+    //     DateTime? dataInfo = DateTime.tryParse(
+    //         data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
+    //             '/' +
+    //             DateTime.now().year.toString());
+    //     Infos info = Infos(dataInfo, descricao[i]['title'].trim());
+    //     listInfos.add(info);
+    //     i++;
+    //   }
+    // });
+
     return listaMenuLateral;
+  }
+
+  Future<void> extraiNoticias() async {
+    Response response = await HttpConnection.dio
+        .get('https://sigaa.ufrrj.br/sigaa/ava/NoticiaTurma/mostrar.jsf');
+    // log(response.data);
   }
 }
