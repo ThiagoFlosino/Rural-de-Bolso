@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "99827210873",
+    "project_id": "ruraldebolso",
+    "storage_bucket": "ruraldebolso.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99827210873:android:833aaadafb371af59bd2a8",
+        "android_client_info": {
+          "package_name": "br.com.ufrrj.ruralDeBolso"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99827210873-b5eilab2undcfp3m5b630jmh46jdd2do.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxsOG99Vc2DLZGtuvQpmQQRXj27pXIh-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "99827210873-b5eilab2undcfp3m5b630jmh46jdd2do.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
