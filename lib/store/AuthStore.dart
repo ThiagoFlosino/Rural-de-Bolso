@@ -43,4 +43,12 @@ abstract class _AuthStoreBase with Store {
     }
     loading = false;
   }
+
+  @action
+  void logout() {
+    isLogged = false;
+    username = '';
+    password = '';
+    SharedPreferencesHelper.instance.logout();
+  }
 }

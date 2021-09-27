@@ -10,10 +10,7 @@ import 'package:html/parser.dart' show parse;
 class ServiceLogin {
   static Future<bool> doLogin(user, pass) async {
     // TODO: Adicionar log nessa funcao
-    UserStorage.setUsername(user);
-    UserStorage.setPassword(pass);
-    SharedPreferencesHelper.instance.setUserName(user);
-    SharedPreferencesHelper.instance.setPassword(pass);
+
     await HttpConnection.dio
         .get("https://sigaa.ufrrj.br/sigaa/verTelaLogin.do");
     var cookie = await HttpConnection.cookieJar
@@ -38,6 +35,10 @@ class ServiceLogin {
     }
     UserStorage.setLoggedIn(true);
     appController.instance.setIsLogged(true);
+    UserStorage.setUsername(user);
+    UserStorage.setPassword(pass);
+    SharedPreferencesHelper.instance.setUserName(user);
+    SharedPreferencesHelper.instance.setPassword(pass);
     return true;
   }
 
@@ -89,7 +90,6 @@ class ServiceLogin {
       });
       post['form'] = postData;
     }
-    log(post.toString());
     Response respPost =
         await HttpConnection.dio.post(post['action'], data: post['form']);
     return extraiHtml(respPost);

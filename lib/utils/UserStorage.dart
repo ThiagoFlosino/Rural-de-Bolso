@@ -8,6 +8,7 @@ class UserStorage {
   static const _keyPassword = 'password';
   static const _keyLoggedIn = 'loggedIn';
   static const _keyAluno = 'aluno';
+  static var logado = false;
 
   static Future setUsername(String username) async =>
       await _storage.write(key: _keyUserName, value: username);
@@ -15,8 +16,10 @@ class UserStorage {
   static Future setPassword(String password) async =>
       await _storage.write(key: _keyPassword, value: password);
 
-  static Future setLoggedIn(bool loggedIn) async =>
-      await _storage.write(key: _keyLoggedIn, value: loggedIn.toString());
+  static Future setLoggedIn(bool loggedIn) async {
+    logado = loggedIn;
+    await _storage.write(key: _keyLoggedIn, value: loggedIn.toString());
+  }
 
   static Future<String?> getUsername() async =>
       await _storage.read(key: _keyUserName);

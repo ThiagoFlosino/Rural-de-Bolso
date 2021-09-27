@@ -19,10 +19,7 @@ class _LoginState extends State<Login> {
     super.didChangeDependencies();
     reaction((_) => authStore.isLogged, (isLogged) {
       if (isLogged == true) {
-        // LandingPage.instance.extraiInformacaoesLanding().then((value) => {
-        //       ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         Navigator.of(context).pushReplacementNamed(AppRouter.HOME);
-        // });
       }
     });
   }
@@ -60,45 +57,36 @@ class _LoginState extends State<Login> {
                       ],
                     )),
                 SizedBox(height: 10),
-                Observer(
-                    name: 'usuario',
-                    builder: (_) {
-                      return SizedBox(
-                        width: 600,
-                        child: TextField(
-                          onChanged: authStore.setUsername,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                            ),
-                            labelText: 'Usuário',
-                            filled: true,
-                            fillColor: Colors.white70,
-                            focusColor: Colors.greenAccent,
-                          ),
-                        ),
-                      );
-                    }),
+                SizedBox(
+                  width: 600,
+                  child: TextField(
+                    onChanged: authStore.setUsername,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      labelText: 'Usuário',
+                      filled: true,
+                      fillColor: Colors.white70,
+                      focusColor: Colors.greenAccent,
+                    ),
+                  ),
+                ),
                 SizedBox(height: 10),
-                Observer(
-                    name: 'senha',
-                    builder: (_) {
-                      return SizedBox(
-                        width: 600,
-                        child: TextField(
-                          onChanged: authStore.setPassword,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              labelText: 'Senha',
-                              filled: true,
-                              fillColor: Colors.white70),
-                        ),
-                      );
-                    }),
+                SizedBox(
+                  width: 600,
+                  child: TextField(
+                    onChanged: authStore.setPassword,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
+                        labelText: 'Senha',
+                        filled: true,
+                        fillColor: Colors.white70),
+                  ),
+                ),
                 SizedBox(height: 10),
                 Observer(builder: (_) {
                   return ElevatedButton(

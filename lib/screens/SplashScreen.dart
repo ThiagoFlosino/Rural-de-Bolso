@@ -16,10 +16,8 @@ class _SplashScreenState extends State<SplashScreen> {
   AuthStore authStore = AuthStore();
   resetNewLaunch() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    log('entrou aqui');
     if (prefs.containsKey(UserPref.USERNAME.toString()) &&
         prefs.containsKey(UserPref.PASSWORD.toString())) {
-      log('Preenchido');
       authStore.setUsername(
           prefs.getString(UserPref.USERNAME.toString()).toString());
       authStore.setPassword(
@@ -33,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     resetNewLaunch();
     Timer(
-        Duration(seconds: 5),
+        Duration(seconds: 10),
         () => Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
               return authStore.isLogged ? Dashboard() : Login();

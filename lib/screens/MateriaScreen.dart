@@ -85,7 +85,7 @@ class _MateriaScreenState extends State<MateriaScreen> {
                           leading: FlutterLogo(),
                           title: Text(item.itens[indexSub].descricao),
                           subtitle: Text((item.itens[indexSub].data != null
-                              ? item.itens[indexSub].data!.toString()
+                              ? item.itens[indexSub].data.toString()
                               : '-')),
                         ),
                       );

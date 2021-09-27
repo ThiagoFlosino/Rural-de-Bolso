@@ -100,12 +100,6 @@ ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\
 		ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\AndroidManifest.xml:19:15-52
 	android:name
 		ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\AndroidManifest.xml:18:15-70
-meta-data#io.flutter.embedding.android.SplashScreenDrawable
-ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\AndroidManifest.xml:26:13-29:17
-	android:resource
-		ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\AndroidManifest.xml:28:15-61
-	android:name
-		ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\AndroidManifest.xml:27:15-79
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
 ADDED from D:\Faculdade\TCC\RuralDeBolso_V2\rural_de_bolso\android\app\src\main\AndroidManifest.xml:30:13-33:29
 action#android.intent.action.MAIN

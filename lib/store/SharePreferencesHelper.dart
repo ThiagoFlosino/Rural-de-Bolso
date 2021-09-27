@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
 
 class SharedPreferencesHelper {
   static SharedPreferencesHelper instance = new SharedPreferencesHelper();
@@ -25,6 +24,13 @@ class SharedPreferencesHelper {
   Future<bool> isLogged() async {
     var pref = await SharedPreferences.getInstance();
     return pref.getBool(UserPref.ISLOGGED.toString()) ?? false;
+  }
+
+  Future<void> logout() async {
+    final pref = await SharedPreferences.getInstance();
+    pref.remove(UserPref.USERNAME.toString());
+    pref.remove(UserPref.PASSWORD.toString());
+    pref.remove(UserPref.ISLOGGED.toString());
   }
 }
 
