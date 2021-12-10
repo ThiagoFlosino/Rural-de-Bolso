@@ -4,13 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:rural_de_bolso/model/Infos.dart';
 import 'package:rural_de_bolso/model/Materia.dart';
 import 'package:rural_de_bolso/utils/Conversor.dart';
+import 'package:rural_de_bolso/utils/conversorDataSigaa.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:intl/intl.dart';
 
 class MateriasPage {
   static MateriasPage instance = new MateriasPage();
-  static String horarioTabelaRegex = r'\d{2}\w\d{2}/gi';
+  static String horarioTabelaRegex = '([2-7]{1,5})([MTN])([1-7]{1,7})';
   static String replaceScript =
       '<script type="text/javascript" language="Javascript">function dpf(f) {var adp = f.adp;if (adp != null) {for (var i = 0;i < adp.length;i++) {f.removeChild(adp[i]);}}};function apf(f, pvp) {var adp = new Array();f.adp = adp;var i = 0;for (k in pvp) {var p = document.createElement("input");p.type = "hidden";p.name = k;p.value = pvp[k];f.appendChild(p);adp[i++] = p;}};function jsfcljs(f, pvp, t) {apf(f, pvp);var ft = f.target;if (t) {f.target = t;}f.submit();f.target = ft;dpf(f);};</script>';
 
@@ -60,7 +61,7 @@ class MateriasPage {
           } else if ((txt.contains("(") == true ||
                   txt.contains(RegExp(horarioTabelaRegex)) == true) &&
               !txt.contains("function")) {
-            materia.horario = txt;
+            materia.horario = conversorDataSigaa.instance.converteHorario(txt);
           } else if (txt.contains("-") && !txt.contains("function")) {
             materia.nome = txt;
           } else if (txt.contains('href') || txt.contains('script')) {
@@ -134,7 +135,9 @@ class MateriasPage {
       var aulas = bloco.querySelectorAll("div .rich-stglpanel-body i");
       var aulaTxt;
       aulas.forEach((aula) {
-        if (aula.text.indexOf("/") > -1) {
+        if (aula.text.indexOf("/") > -1 &&
+            aula.text.toLowerCase().indexOf('ministradas') < 0 &&
+            aula.text.toLowerCase().indexOf('visualizar') < 0) {
           aulaTxt = aula.text;
           listInfos.add(new Infos('', aulaTxt));
         }
@@ -152,8 +155,11 @@ class MateriasPage {
 //   Get body caso nao tenha lista
       if (listas.length <= 0 && aulaTxt != null) {
         var boody = bloco.querySelectorAll("div .rich-stglpanel-body");
-        listInfos.add(new Infos('',
-            boody[0].text.replaceAll('\n', '').replaceAll('\t', '').trim()));
+        if (boody[0].text.toLowerCase().indexOf('ministradas') < 0 &&
+            boody[0].text.toLowerCase().indexOf('visualizar') < 0) {
+          listInfos.add(new Infos('',
+              boody[0].text.replaceAll('\n', '').replaceAll('\t', '').trim()));
+        }
       }
       infoMateria.itens = listInfos;
       listaMenuLateral.add(infoMateria);

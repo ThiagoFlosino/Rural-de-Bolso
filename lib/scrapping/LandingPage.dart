@@ -96,12 +96,12 @@ class LandingPage {
     });
     return materia;
   }
+  // 'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.usuario',
 
   extraiInfosAluno() {
     List<Map<String, dynamic>> elements;
     var name, dept, sem, img;
 
-    // 'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.usuario',
     elements = HttpConnection.webScraper.getElement('.nome > small > b', []);
     if (!elements.isEmpty) {
       name = elements[0]['title'].toString().trim();
