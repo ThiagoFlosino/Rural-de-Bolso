@@ -96,12 +96,12 @@ class LandingPage {
     });
     return materia;
   }
+  // 'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.usuario',
 
   extraiInfosAluno() {
     List<Map<String, dynamic>> elements;
     var name, dept, sem, img;
 
-    // 'div#container > div#cabecalho > div#painel-usuario > div#info-usuario > p.usuario',
     elements = HttpConnection.webScraper.getElement('.nome > small > b', []);
     if (!elements.isEmpty) {
       name = elements[0]['title'].toString().trim();
@@ -156,20 +156,16 @@ class LandingPage {
           .replaceAll(RegExp(r'\n'), '');
       if (temp.toLowerCase().contains('pendente')) {
         if (temp.toLowerCase().contains('optativa')) {
-          print(temp.replaceAll(RegExp(r'[^(\d*)]'), ''));
           valores['optativa'] = temp.replaceAll(RegExp(r'[^(\d*)]'), '');
         }
         if (temp.toLowerCase().contains('obrigatória')) {
-          print(temp.replaceAll(RegExp(r'[^(\d*)]'), ''));
           valores['obrigatoria'] = temp.replaceAll(RegExp(r'[^(\d*)]'), '');
         }
         if (temp.toLowerCase().contains('complementar')) {
-          print(temp.replaceAll(RegExp(r'[^(\d*)]'), ''));
           valores['complementar'] = temp.replaceAll(RegExp(r'[^(\d*)]'), '');
         }
       }
     });
-    print(valores);
     return valores;
     // return infos;
 

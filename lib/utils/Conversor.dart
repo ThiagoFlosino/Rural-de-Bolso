@@ -9,7 +9,7 @@ class Conversor {
     RegExp exp = RegExp(r"j_id_jsp\w*");
     var formQuery = exp.stringMatch(javaScriptCode).toString();
 
-    var listForm = document.querySelectorAll('#${formQuery}');
+    var listForm = document.querySelectorAll('#$formQuery');
     if (listForm == null) {
       return false;
     }
@@ -18,7 +18,7 @@ class Conversor {
     var formAction = formEl.attributes['action'];
     if (formAction == null || formAction == '') return;
 
-    var action = 'https://sigaa.ufrrj.br${formAction}';
+    var action = 'https://sigaa.ufrrj.br$formAction';
     var postValues = {};
 
     var inputs = formEl.querySelectorAll("input:not([type='submit'])");
@@ -33,7 +33,7 @@ class Conversor {
     var replace = javaScriptCode
         .replaceAll(RegExp(r'([\S\s]*?){'), '')
         .replaceAll(RegExp(r'},([\S\s]*?)false'), '');
-    var postValuesString = '{${replace}}';
+    var postValuesString = '{$replace}';
     var json = jsonDecode(postValuesString.replaceAll("'", "\""));
     var retorno = {};
     retorno['action'] = action;

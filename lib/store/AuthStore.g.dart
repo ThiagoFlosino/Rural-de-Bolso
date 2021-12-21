@@ -120,6 +120,17 @@ mixin _$AuthStore on _AuthStoreBase, Store {
   }
 
   @override
+  void logout() {
+    final _$actionInfo = _$_AuthStoreBaseActionController.startAction(
+        name: '_AuthStoreBase.logout');
+    try {
+      return super.logout();
+    } finally {
+      _$_AuthStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 username: ${username},

@@ -99,18 +99,66 @@ mixin _$AlunoStore on _AlunoStore, Store {
     });
   }
 
-  final _$infosAtom = Atom(name: '_AlunoStore.infos');
+  final _$horasObrigatoriasAtom = Atom(name: '_AlunoStore.horasObrigatorias');
 
   @override
-  Object get infos {
-    _$infosAtom.reportRead();
-    return super.infos;
+  double get horasObrigatorias {
+    _$horasObrigatoriasAtom.reportRead();
+    return super.horasObrigatorias;
   }
 
   @override
-  set infos(Object value) {
-    _$infosAtom.reportWrite(value, super.infos, () {
-      super.infos = value;
+  set horasObrigatorias(double value) {
+    _$horasObrigatoriasAtom.reportWrite(value, super.horasObrigatorias, () {
+      super.horasObrigatorias = value;
+    });
+  }
+
+  final _$horasComplementaresAtom =
+      Atom(name: '_AlunoStore.horasComplementares');
+
+  @override
+  double get horasComplementares {
+    _$horasComplementaresAtom.reportRead();
+    return super.horasComplementares;
+  }
+
+  @override
+  set horasComplementares(double value) {
+    _$horasComplementaresAtom.reportWrite(value, super.horasComplementares, () {
+      super.horasComplementares = value;
+    });
+  }
+
+  final _$horasOptativasAtom = Atom(name: '_AlunoStore.horasOptativas');
+
+  @override
+  double get horasOptativas {
+    _$horasOptativasAtom.reportRead();
+    return super.horasOptativas;
+  }
+
+  @override
+  set horasOptativas(double value) {
+    _$horasOptativasAtom.reportWrite(value, super.horasOptativas, () {
+      super.horasOptativas = value;
+    });
+  }
+
+  final _$percentualIntegralizadoAtom =
+      Atom(name: '_AlunoStore.percentualIntegralizado');
+
+  @override
+  double get percentualIntegralizado {
+    _$percentualIntegralizadoAtom.reportRead();
+    return super.percentualIntegralizado;
+  }
+
+  @override
+  set percentualIntegralizado(double value) {
+    _$percentualIntegralizadoAtom
+        .reportWrite(value, super.percentualIntegralizado, () {
+      super.percentualIntegralizado = value;
     });
   }
 
@@ -161,6 +209,17 @@ mixin _$AlunoStore on _AlunoStore, Store {
   }
 
   @override
+  dynamic setFromAlunoModel(Aluno aluno) {
+    final _$actionInfo = _$_AlunoStoreActionController.startAction(
+        name: '_AlunoStore.setFromAlunoModel');
+    try {
+      return super.setFromAlunoModel(aluno);
+    } finally {
+      _$_AlunoStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 nome: ${nome},
@@ -169,7 +228,10 @@ semestre: ${semestre},
 img: ${img},
 materias: ${materias},
 notificacoes: ${notificacoes},
-infos: ${infos}
+horasObrigatorias: ${horasObrigatorias},
+horasComplementares: ${horasComplementares},
+horasOptativas: ${horasOptativas},
+percentualIntegralizado: ${percentualIntegralizado}
     ''';
   }
 }

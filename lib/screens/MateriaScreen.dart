@@ -39,7 +39,7 @@ class _MateriaScreenState extends State<MateriaScreen> {
                             color: Colors.black,
                             fontWeight: FontWeight.bold)),
                     Text('${materia.horario}',
-                        style: TextStyle(fontSize: 16, color: Colors.black))
+                        style: TextStyle(fontSize: 12, color: Colors.black))
                   ]),
                   Row(
                     children: [
@@ -85,7 +85,7 @@ class _MateriaScreenState extends State<MateriaScreen> {
                           leading: FlutterLogo(),
                           title: Text(item.itens[indexSub].descricao),
                           subtitle: Text((item.itens[indexSub].data != null
-                              ? item.itens[indexSub].data!.toString()
+                              ? item.itens[indexSub].data.toString()
                               : '-')),
                         ),
                       );

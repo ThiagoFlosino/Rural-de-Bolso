@@ -4,13 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:rural_de_bolso/model/Infos.dart';
 import 'package:rural_de_bolso/model/Materia.dart';
 import 'package:rural_de_bolso/utils/Conversor.dart';
+import 'package:rural_de_bolso/utils/conversorDataSigaa.dart';
 import 'package:rural_de_bolso/utils/HttpConnection.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:intl/intl.dart';
 
 class MateriasPage {
   static MateriasPage instance = new MateriasPage();
-  static String horarioTabelaRegex = r'\d{2}\w\d{2}/gi';
+  static String horarioTabelaRegex = '([2-7]{1,5})([MTN])([1-7]{1,7})';
   static String replaceScript =
       '<script type="text/javascript" language="Javascript">function dpf(f) {var adp = f.adp;if (adp != null) {for (var i = 0;i < adp.length;i++) {f.removeChild(adp[i]);}}};function apf(f, pvp) {var adp = new Array();f.adp = adp;var i = 0;for (k in pvp) {var p = document.createElement("input");p.type = "hidden";p.name = k;p.value = pvp[k];f.appendChild(p);adp[i++] = p;}};function jsfcljs(f, pvp, t) {apf(f, pvp);var ft = f.target;if (t) {f.target = t;}f.submit();f.target = ft;dpf(f);};</script>';
 
@@ -60,7 +61,7 @@ class MateriasPage {
           } else if ((txt.contains("(") == true ||
                   txt.contains(RegExp(horarioTabelaRegex)) == true) &&
               !txt.contains("function")) {
-            materia.horario = txt;
+            materia.horario = conversorDataSigaa.instance.converteHorario(txt);
           } else if (txt.contains("-") && !txt.contains("function")) {
             materia.nome = txt;
           } else if (txt.contains('href') || txt.contains('script')) {
@@ -81,7 +82,8 @@ class MateriasPage {
                 .post(post['action'], data: post['form']);
             if (HttpConnection.webScraper.loadFromString(respPost.data)) {
               // var atividade = ExtrairBody();
-              List<InfoMateria> menuLaterial = await ExtraiMenuLateralMateria();
+              List<InfoMateria> menuLaterial =
+                  await ExtraiMenuLateralMateria(parse(respPost.data));
               materia.infoMaterias = List.empty();
               if (!menuLaterial.isEmpty) {
                 materia.infoMaterias = menuLaterial;
@@ -92,6 +94,7 @@ class MateriasPage {
         lista.add(materia);
       }
     }
+    extraiNoticias();
     return lista;
   }
 
@@ -119,33 +122,79 @@ class MateriasPage {
     return tituloAula;
   }
 
-  Future<List<InfoMateria>> ExtraiMenuLateralMateria() async {
+  Future<List<InfoMateria>> ExtraiMenuLateralMateria(document) async {
     List<InfoMateria> listaMenuLateral = [];
-    var menuLaterialHeader =
-        HttpConnection.webScraper.getElement('.headerBloco', ['id']);
-    menuLaterialHeader.forEach((element) {
+    var blocos = document.querySelectorAll('.blocoDireita');
+    blocos.forEach((bloco) {
       InfoMateria infoMateria = InfoMateria();
-      infoMateria.titulo = element['title'].trim();
-      infoMateria.itens = List.empty();
-      var id = element['attributes']['id'].toString().replaceAll('_header', '');
-      var data = HttpConnection.webScraper.getElement('#${id} li .data', []);
-      var descricao =
-          HttpConnection.webScraper.getElement('#${id} li .descricao', []);
-      int i = 0;
       List<Infos> listInfos = [];
-      while (i < data.length) {
-        DateTime? dataInfo = DateTime.tryParse(
-            data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
-                '/' +
-                DateTime.now().year.toString());
-        // DateTime dataInfo = DateTime.now();
-        Infos info = Infos(dataInfo, descricao[i]['title'].trim());
-        listInfos.add(info);
-        i++;
+      var headers = bloco.querySelectorAll("form .headerBloco");
+      headers.forEach(
+          (header) => {infoMateria.titulo = header.text.toString().trim()});
+
+      var aulas = bloco.querySelectorAll("div .rich-stglpanel-body i");
+      var aulaTxt;
+      aulas.forEach((aula) {
+        if (aula.text.indexOf("/") > -1 &&
+            aula.text.toLowerCase().indexOf('ministradas') < 0 &&
+            aula.text.toLowerCase().indexOf('visualizar') < 0) {
+          aulaTxt = aula.text;
+          listInfos.add(new Infos('', aulaTxt));
+        }
+      });
+
+      // Get lista de elementos
+      var listas = bloco.querySelectorAll("div .rich-stglpanel-body ul li");
+      listas.forEach((lista) {
+        var data = lista.querySelectorAll('.data')[0].text.toString().trim();
+        var desc =
+            lista.querySelectorAll('.descricao')[0].text.toString().trim();
+        listInfos.add(new Infos(data, desc));
+      });
+
+//   Get body caso nao tenha lista
+      if (listas.length <= 0 && aulaTxt != null) {
+        var boody = bloco.querySelectorAll("div .rich-stglpanel-body");
+        if (boody[0].text.toLowerCase().indexOf('ministradas') < 0 &&
+            boody[0].text.toLowerCase().indexOf('visualizar') < 0) {
+          listInfos.add(new Infos('',
+              boody[0].text.replaceAll('\n', '').replaceAll('\t', '').trim()));
+        }
       }
       infoMateria.itens = listInfos;
       listaMenuLateral.add(infoMateria);
     });
+
+    // var menuLaterialHeader =
+    //     HttpConnection.webScraper.getElement('.headerBloco', ['id']);
+
+    // menuLaterialHeader.forEach((element) {
+    //   InfoMateria infoMateria = InfoMateria();
+    //   infoMateria.titulo = element['title'].trim();
+    //   infoMateria.itens = List.empty();
+    //   var id = element['attributes']['id'].toString().replaceAll('_header', '');
+    //   var data = HttpConnection.webScraper.getElement('#${id} li .data', []);
+    //   var descricao =
+    //       HttpConnection.webScraper.getElement('#${id} li .descricao', []);
+    //   int i = 0;
+    //   List<Infos> listInfos = [];
+    //   while (i < data.length) {
+    //     DateTime? dataInfo = DateTime.tryParse(
+    //         data[i]['title'].replaceAll(RegExp(r'\d{2}h'), '').trim() +
+    //             '/' +
+    //             DateTime.now().year.toString());
+    //     Infos info = Infos(dataInfo, descricao[i]['title'].trim());
+    //     listInfos.add(info);
+    //     i++;
+    //   }
+    // });
+
     return listaMenuLateral;
+  }
+
+  Future<void> extraiNoticias() async {
+    Response response = await HttpConnection.dio
+        .get('https://sigaa.ufrrj.br/sigaa/ava/NoticiaTurma/mostrar.jsf');
+    // log(response.data);
   }
 }
